@@ -111,4 +111,4 @@ results = []
 
 results.append(benchmark(MultinomialNB(alpha=.01)))
 results.append(benchmark(BernoulliNB(alpha=.01)))
-
+results.append(benchmark(LinearSVC()))
