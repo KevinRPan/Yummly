@@ -49,11 +49,20 @@ predictor_matrix_test = tfidf_matrix_test
 
 from sklearn.naive_bayes import BernoulliNB
 
+from sklearn.linear_model import LogisticRegression
+
 clf = BernoulliNB()
 params={'alpha':[.001,.01,.1,1]}
+
+
+params = {'C':[1, 10]}
+clf = LinearSVC()
+clf = LogisticRegression()
+
 clf=grid_search.GridSearchCV(clf, params)
 clf.fit(predictor_matrix[0:cutoff], target_classes[0:cutoff])
-clf.score(predictor_matrix[cutoff:],target_classes[cutoff:]) # .739 with gridsearch, .653 without
+clf.score(predictor_matrix[cutoff:],target_classes[cutoff:]) # .739 NB with gridsearch, .653 without
+##774 logistic
 
 predicted_classes = clf.predict(predictor_matrix_test)
 

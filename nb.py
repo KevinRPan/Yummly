@@ -8,10 +8,9 @@ import sys
 from time import time
 #import matplotlib.pyplot as plt
 
-#from sklearn.datasets import fetch_20newsgroups
-#from sklearn.feature_extraction.text import TfidfVectorizer
-#from sklearn.feature_extraction.text import HashingVectorizer
-#from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.linear_model import RidgeClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
@@ -28,7 +27,8 @@ from sklearn import grid_search
 from sklearn import metrics
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn import cross_validation
+from sklearn.cross_validation import KFold
 
 #path='/Box\ Sync/Kaggle/Yummly/'
 #os.chdir(path)
@@ -73,6 +73,7 @@ y_train=y[0:nsplit]
 X_test=X[nsplit:]
 y_test=y[nsplit:]
 
+#kf=KFold(len(data),n_folds=10,shuffle=True,random_state=1)
 
 
 def benchmark(clf,params=None):
@@ -117,8 +118,9 @@ results = []
 results.append(benchmark(MultinomialNB(alpha=.01))) #.604
 results.append(benchmark(BernoulliNB(alpha=.01))) #.731
 BNBparams={'alpha':[.001,.01,.1,1]}
-results.append(benchmark(BernoulliNB(),BNBparams)) #.739
+results.append(benchmark(BernoulliNB(),BNBparams)) #.739 -> .750 kfold
+results.append(benchmark(MultinomialNB(),BNBparams)) #.604
 results.append(benchmark(LinearSVC())) #.741
 SVCparams={'C':[.01,.1,1,10]}
 results.append(benchmark(LinearSVC(),SVCparams)) #.772
-results.append(benchmark(LogisticRegression())) #.595
+results.append(benchmark(LogisticRegression(),SVCparams)) #.729 vs .595 no opt

@@ -40,16 +40,20 @@ targets_tr = traindf['cuisine']
 predictors_ts = tfidfts
 
 
+from sklearn.naive_bayes import BernoulliNB
 #classifier = LinearSVC(C=0.80, penalty="l2", dual=False)
 parameters = {'C':[1, 10]}
-#clf = LinearSVC()
+clf = LinearSVC()
 clf = LogisticRegression()
+
+clf = BernoulliNB()
+parameters={'alpha':[.001,.01,.1,1]}
 
 classifier = grid_search.GridSearchCV(clf, parameters)
 
 classifier=classifier.fit(predictors_tr[:cutoff],targets_tr[:cutoff])
-classifier.score(predictors_tr[cutoff:],targets_tr[cutoff:]) #.777
-
+classifier.score(predictors_tr[cutoff:],targets_tr[cutoff:]) #.777 from Logistic
+#715 nB
 
 predictions=classifier.predict(predictors_ts)
 testdf['cuisine'] = predictions
@@ -57,4 +61,5 @@ testdf = testdf.sort('id' , ascending=True)
 
 #testdf[['id' , 'ingredients_clean_string' , 'cuisine' ]].to_csv("submission.csv")
 
-                
+
+
