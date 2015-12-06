@@ -1,0 +1,12 @@
+Notes
+
+A variety of machine learning paradigms have been applied to text classification, including rule induction [6], Naive Bayes [7], memory based learning [8], decision tree induction [9] and support vector machines [10].
+
+Neural Networks Notes
+
+Don't need recurrent networks or LSTMs to learn long-term dependencies of ingredients to cuisines.
+
+Try to cut unique ingredients or those in too many. (Stop word trimming) 
+
+
+Naive Bayes Notes
