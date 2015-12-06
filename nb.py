@@ -6,12 +6,12 @@ import logging
 from optparse import OptionParser
 import sys
 from time import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
-from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import HashingVectorizer
-from sklearn.feature_selection import SelectKBest, chi2
+#from sklearn.datasets import fetch_20newsgroups
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import HashingVectorizer
+#from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.linear_model import RidgeClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
@@ -23,7 +23,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestCentroid
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils.extmath import density
+from sklearn.linear_model import LogisticRegression
+from sklearn import grid_search
 from sklearn import metrics
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.preprocessing import LabelEncoder
+
 
 #path='/Box\ Sync/Kaggle/Yummly/'
 #os.chdir(path)
@@ -40,9 +45,6 @@ n=len(data)
 nsplit=n/2
 
 
-from sklearn.feature_extraction import DictVectorizer
-from sklearn.preprocessing import LabelEncoder
-
 def normalize_input(X):
     return (X.T / np.sum(X, axis=1)).T
 
@@ -50,6 +52,7 @@ X=[x['ingredients'] for x in data]
 X= [dict(zip(x,np.ones(len(x)))) for x in X]
 
 vec = DictVectorizer()
+
 X= vec.fit_transform(X).toarray()
 X= normalize_input(X)
 X = X.astype(np.float32)
@@ -72,7 +75,10 @@ y_test=y[nsplit:]
 
 
 
-def benchmark(clf):
+def benchmark(clf,params=None):
+    if params is not None:
+		clf=grid_search.GridSearchCV(clf, params)
+
     print('_' * 80)
     print("Training: ")
     print(clf)
@@ -108,7 +114,11 @@ def benchmark(clf):
 
 
 results = []
-
-results.append(benchmark(MultinomialNB(alpha=.01)))
-results.append(benchmark(BernoulliNB(alpha=.01)))
-results.append(benchmark(LinearSVC()))
+results.append(benchmark(MultinomialNB(alpha=.01))) #.604
+results.append(benchmark(BernoulliNB(alpha=.01))) #.731
+BNBparams={'alpha':[.001,.01,.1,1]}
+results.append(benchmark(BernoulliNB(),BNBparams)) #.739
+results.append(benchmark(LinearSVC())) #.741
+SVCparams={'C':[.01,.1,1,10]}
+results.append(benchmark(LinearSVC(),SVCparams)) #.772
+results.append(benchmark(LogisticRegression())) #.595
